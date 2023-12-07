@@ -1,27 +1,88 @@
+const { features } = require("process");
+const queries = require("./queries.js");
+
 var quizzes = [
-    //{quizName: id}
-    {"wojewodztwa": 1},
-    {"Duze miasta": 2},
+    //{quizName, id}
+    
+    {name: "Krakow", id: -1, type: "Polygon", label: "test"},
+    {name: "wojewodztwa", id : 0},
+    {name: "Miasta wojewodzkie", id : 1, type: "Polygon"},
+    {name: "Miasta wojewodzkie", id : 2, type: "Point"}
 ]
 
-var queries = new Map() //{query id: queryBody (URI-encoded)}
-
-queries[1] = "data="+ encodeURIComponent(`
-[bbox:49.967891, 19.723382, 50.124380, 20.093834]
-[out:json]
-[timeout:90]
-;
-area[name="Polska (ląd)"];
-relation[boundary=administrative][admin_level=8][population~".*......"](area) ->.a;
-.a out;
-`)
-
-module.exports = {
-    getQuizzes : function() {
-        return quizzes;
+geoJSONparser = {
+    parse : function(geoJson){
+        return geoJson;//to do in the future
     },
 
-    getURIbyId: function(id) {
-        return queries[id];
+    simplifyGeometry : function(geoJson, optimizationFactor){
+        for(feature in geoJson)
+            console.log(feature);
+    },
+
+    filterPolygons : function(geoJson) {
+        if(geoJson.features != undefined) {
+            let featuresOld = geoJson.features;
+            geoJson.features = [];
+            for(let feature of featuresOld){
+                if(feature.geometry.type == 'Polygon'){
+                    geoJson.features.push(feature);
+                }
+            }
+        }
+        return geoJson;
     }
 }
+
+ class OverpassAPI {
+    
+
+    async fetchQuiz(id, parser = function(val){return val;}) {
+        let result = await fetch(
+            "https://overpass-api.de/api/interpreter",
+            {
+                method: "POST",
+                body: "data=" + this.getURIbyId(id)
+            }
+        ).then(
+            (data)=>data.json()
+        ).then(
+            (data) => parser(data)
+        );
+        return result;
+    };
+
+    getQuizzes() {
+        return quizzes;
+    };
+
+    getURIbyId(id) {
+        return queries[id];
+    };
+
+    async test(id, parser  = function(val){return val;}){
+        let result = await fetch(
+            "https://overpass-api.de/api/interpreter",
+            {
+                method: "POST",
+                body: "data=" + this.getURIbyId(id)
+            }
+        ).then(
+            (data)=>data.json()
+        ).then(
+            (data) => parser(data)
+        ).then(
+            (data) => geoJSONparser.filterPolygons(data)
+        )
+        geoJSONparser.simplifyGeometry(result, 2);
+        return result;
+    }
+
+    
+}
+
+module.exports = OverpassAPI;
+
+
+
+
