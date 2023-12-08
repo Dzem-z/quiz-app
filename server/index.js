@@ -41,14 +41,14 @@ app.get("/json/:id([0-9]+)", async (req, res) => {
     return res.json(await overpassAPI.fetchQuiz(req.params.id/*, osmtogeojson*/));
 })
 
-app.get("/api/quizzes/:id([0-9]+)", async (req, res) => {   //returns quiz info in geoJson format
-    try {
-        let result = await overpassAPI.fetchQuiz(req.params.id, osmtogeojson);
+app.get("/api/quizzes/:factor([0-9]+)/:id([0-9]+)", async (req, res) => {   //returns quiz info in geoJson format
+    //try {
+        let result = await overpassAPI.fetchQuiz(req.params.id, osmtogeojson, req.params.factor);
         return res.json(result);
 
-    }catch(error) {
+    //}catch(error) {
         return res.send("wrong id");
-    }
+    //}
     
 })
 
