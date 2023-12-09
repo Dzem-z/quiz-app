@@ -1,5 +1,6 @@
 const { features } = require("process");
 const queries = require("./queries.js");
+const { count } = require("console");
 
 var quizzes = [
     /**
@@ -22,31 +23,59 @@ geoJSONparser = {
     simplifyGeometry : function(geoJson, optimizationFactor){
         console.log("entered--");
         let start = Date.now();
-        pointsLeft = new Set([]);   //all points that will not be optimized out
         if(geoJson.features != undefined) {
+            pointsLeft = new Set([]);   //all points that will not be optimized out
+            nPoints = new Map();
+
+
             for(let feature of geoJson.features){
                 if(feature.geometry.type == 'Polygon'){
+                    
+                    let firstStringifiedPoint = String(feature.geometry.coordinates[0][0]);
+                    //count points
+                    if(nPoints.has())
+                        nPoints.set(firstStringifiedPoint, nPoints.get(firstStringifiedPoint) + 1);
+                    else
+                        nPoints.set(firstStringifiedPoint, 1);
+
+                    //add connecting point
+                    pointsLeft.add(firstStringifiedPoint);
                     let iter = 0;
                     for(let point of feature.geometry.coordinates[0]){
+                        let stringifiedPoint = String(point);
+                        if(nPoints.has(stringifiedPoint))
+                            nPoints.set(stringifiedPoint, nPoints.get(stringifiedPoint) + 1);
+                        else
+                            nPoints.set(stringifiedPoint, 1);
                         if(iter >= optimizationFactor){
                             iter = 0;
-                            pointsLeft.add(point);
+                            pointsLeft.add(stringifiedPoint);
                         }
                         iter++;
                     }
+                }
+            }
+            //add nPoints where n > 2
+            console.log(nPoints.entries());
+            for(let point of nPoints) {
+                if(point[1] > 2){
+                    console.log("mPoint: " + point[0] +"num:" + point[1]);
+                    pointsLeft.add(point[0]);
                 }
             }
 
             for(let feature of geoJson.features){
                 if(feature.geometry.type == 'Polygon'){
                     let coordinates = feature.geometry.coordinates[0];
+                    //console.log(pointsLeft.has(String(feature.geometry.coordinates[0][feature.geometry.coordinates[0].length - 1])));
+                    //console.log(pointsLeft.has(String(coordinates[coordinates.length - 1])));
                     feature.geometry.coordinates = [[]];
                     for(let point of coordinates){
-                        if(pointsLeft.has(point)){
+                        if(pointsLeft.has(String(point))){
                             feature.geometry.coordinates[0].push(point);
                         }
                     }
-                    console.log(feature.geometry.coordinates[0].length/coordinates.length);
+                    //console.log(feature.geometry.coordinates[0].length/coordinates.length);
                 }
             }
         }
