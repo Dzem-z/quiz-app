@@ -1,6 +1,5 @@
 const path = require("path");
 const express = require("express");
-const osmtogeojson = require('osmtogeojson');
 const overpass = require("./overpassModule");
 
 const PORT = process.env.PORT || 3000;
@@ -19,10 +18,6 @@ app.get("/api/maps", (req, res) => {    //endpoint to get map info
     return res.json(overpassAPI.getQuizzes())
 })
 
-app.get("/test/:id([0-9]+)", async (req, res) => {
-    return res.json(await overpassAPI.test(req.params.id, osmtogeojson));
-})
-
 app.get("/text/:id([0-9]+)", async (req, res) => {
     console.log(overpassAPI.getURIbyId(req.params.id))
     let result = await fetch(
@@ -37,18 +32,9 @@ app.get("/text/:id([0-9]+)", async (req, res) => {
     return res.send(result);
 })
 
-app.get("/json/:id([0-9]+)", async (req, res) => {
-    return res.json(await overpassAPI.fetchQuiz(req.params.id/*, osmtogeojson*/));
-})
-
 app.get("/api/quizzes/:factor([0-9]+)/:id([0-9]+)", async (req, res) => {   //returns quiz info in geoJson format
-    //try {
-        let result = await overpassAPI.fetchQuiz(req.params.id, osmtogeojson, req.params.factor);
+        let result = await overpassAPI.fetchQuiz(req.params.id, req.params.factor);
         return res.json(result);
-
-    //}catch(error) {
-        return res.send("wrong id");
-    //}
     
 })
 
