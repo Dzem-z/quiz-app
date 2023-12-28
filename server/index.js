@@ -5,7 +5,7 @@ const mysql = require("mysql");
 
 
 const PORT = process.env.PORT || 3000;
-const HOSTNAME = 'localhost'; //hardcoded
+const HOSTNAME = '127.0.0.1'; //hardcoded
 const DATABASE_USERNAME = 'quiz';
 const DATABASE_PASSWORD = 'quiz_password';
 const DATABASE_NAME = 'quizdb';
@@ -17,8 +17,6 @@ const pool = mysql.createPool({
     database : DATABASE_NAME
 });
 
-
-
 const app = express();
 
 const overpassAPI = new overpass();
@@ -29,14 +27,18 @@ app.get("/api", (req, res) => {
     res.json({message: "Hello world!"});
 });
 
-app.get("/api/countries", (req, res) => {    //endpoint to get map info
+app.get("/api/countries", async (req, res) => {    //endpoint to get country info
     pool.getConnection((err, connection) => {
         if (err) throw err;
         
+        connection.query("CALL GetCountries()", (err, result, fields) => {
+            console.log(result);
+            return res.json(result[0]);
+        });
         console.log("fetched countries from database");
-        connection
+            
+        
     })
-    return res.json(overpassAPI.getQuizzes())
 })
 
 app.get("/text/:id([0-9]+)", async (req, res) => {

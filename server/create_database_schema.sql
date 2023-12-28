@@ -1,4 +1,5 @@
 CREATE DATABASE IF NOT EXISTS quizdb;
+CREATE USER IF NOT EXISTS 'quiz'@'localhost' IDENTIFIED BY 'quiz_password';
 GRANT ALL PRIVILEGES ON quizdb.* TO 'quiz'@'localhost';
 USE quizdb;
 
@@ -48,6 +49,15 @@ BEGIN
     SELECT countries.id  INTO id FROM countries WHERE countries.name=country_name;
     INSERT INTO administrative_boundaries(level_number, name, country_id, has_centre)
         VALUE (level_number, name, id, has_centre);
+END $$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE PROCEDURE GetCountries()
+BEGIN
+    SELECT id, name, overpass_name FROM countries;
 END $$
 
 DELIMITER ;

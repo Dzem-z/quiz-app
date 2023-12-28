@@ -2,7 +2,7 @@ const osmtogeojson = require('osmtogeojson');
 
 geoJSONparser = {
     parse : function(geoJson){
-        return osmtogeojson(geoJson);//to do in the future
+        return osmtogeojson(geoJson);
     },
 
     simplifyGeometry : function(geoJson, optimizationFactor){
