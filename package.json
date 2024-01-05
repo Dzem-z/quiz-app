@@ -1,8 +1,8 @@
 {
   "dependencies": {
     "express": "^4.18.2",
-    "mongodb": "^6.3.0",
-    "mysql": "^2.18.1",
+    "mysql2": "^3.6.5",
+    "node": "^21.2.0",
     "osmtogeojson": "^3.0.0-beta.5"
   },
   "scripts": {
