@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS countries (
     overpass_name VARCHAR(1000) NOT NULL
     );
 
-CREATE TABLE IF NOT EXISTS administrative_boundaries (
+CREATE TABLE IF NOT EXISTS administrative_levels (
     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     level_number INT NOT NULL,
     name VARCHAR(1000) NOT NULL, 
@@ -47,7 +47,7 @@ CREATE PROCEDURE AddAdministrativeLevel(
 BEGIN
     DECLARE id INT DEFAULT 0;
     SELECT countries.id  INTO id FROM countries WHERE countries.name=country_name;
-    INSERT INTO administrative_boundaries(level_number, name, country_id, has_centre)
+    INSERT INTO administrative_levels(level_number, name, country_id, has_centre)
         VALUE (level_number, name, id, has_centre);
 END $$
 
@@ -61,3 +61,16 @@ BEGIN
 END $$
 
 DELIMITER ;
+
+DELIMITER $$
+
+CREATE PROCEDURE GetAdministrativeLevel(
+    IN country_id INT
+)
+BEGIN
+    SELECT level_number, name, has_centre FROM administrative_levels WHERE administrative_levels.country_id = country_id;
+END $$
+
+DELIMITER ;
+
+DELIMITER $$
