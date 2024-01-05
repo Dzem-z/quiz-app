@@ -27,21 +27,95 @@ const overpassAPI = new overpass();
 app.use(express.static(path.resolve(__dirname, '../client/build')));
 
 app.get("/api", (req, res) => {
+    //test
     res.json({message: "Hello world!"});
 });
 
-app.get("/api/countries", async (req, res) => {    //endpoint to get country info
+app.get("/api/countries", async (req, res) => {
+    /**
+     * this endpoint sends all country info from local database.
+     * The result is json in format:
+     * [
+     * ...,
+     * {
+     *  "id":(:country id),
+     *  "name":(:country name),
+     *  "overpass_name":(:the string that identifies country in overpass remote database)
+     * }
+     * ...
+     * ]
+     */
     let countries = await runQuery("CALL GetCountries()");
     console.log("fetched countries from database");
     return res.json(countries);
 })
 
 app.get("/api/administratives/:level_number([0-9]+)/:admin_name", async (req,res) => {
+    /**
+     * This endpoint sends all administrative regions on a certain administrative level specified as :level_number within region with :name string specified as :admin_name 
+     * (Notice that country name is also an admin_name).
+     * The result is json in format:
+     * 
+     * {
+     *  ...,
+     *  "osm3s" : {
+     *  ... (contains overpass footer)
+     *  }
+     *  "elements" : [
+     *      ...,
+     *      {
+     *          ...
+     *          "tags": {
+     *              ...,
+     *              "name": (administrative name for certain element),
+     *              "name:(:lan)": (name specific for language given by :lan abbreviation),
+     *              ... 
+     *          }
+     *      }
+     *      ...
+     *  ]
+     * }
+     */
     let response = await overpassAPI.getAdministratives(req.params.admin_name, req.params.level_number);
     return res.send(response);
 })
 
 app.get("/api/geometry/:level_number([0-9])/:factor([0-9]+)/:admin_name", async (req,res) => {
+    /**
+     * This endpoint sends geometry for all administrative regions at the level specified with :level_number within region with :name string specified as :admin_name.
+     * (Notice that country name is also an admin_name). Geometry is defined in geojson format as polygons or multipolygons. Vertices are optimized out with :factor variable.
+     * Only roughly 1/:factor points are left (For example if you set factor=2 then 1/2 of the points will be opitmized out). Points are optimized out evenly.
+     * The output is json in geoJson format specified like below:
+     * {
+     * "type":"FeatureCollection",
+     * "features": [
+     *      ...,
+     *      {
+     *          "type": "Feature",
+     *          ...,
+     *          "properties" : {
+     *              ... (this is some metadata about current object)
+     *           },
+     *          "geometry": {
+     *              "type":(type of geometry (either polygon or multipolygon)),
+     *              "coordinates" : [ (array of polygons)
+     *                  ...,
+     *                  [   (array of cordinates specified for certain polygon)
+     *                      ...,
+     *                      [
+     *                          (:longtitude),
+     *                          (:latitude)
+     *                      ],
+     *                      ...
+     *                  ],
+     *                  ...
+     *              ]
+     *           }
+     *      },
+     *      ...
+     *      ]
+     * }
+     */
     let response = await overpassAPI.getGeometry(req.params.admin_name, req.params.level_number, req.params.factor);
     return res.send(response);
 })
