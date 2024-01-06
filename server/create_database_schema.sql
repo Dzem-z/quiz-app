@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS administrative_levels (
     has_centre BOOL,
     FOREIGN KEY (country_id)
         REFERENCES countries(id),
-    CHECK (level_number>2 && level_number<11)
+    CHECK (level_number>2 && level_number<12)
     );
 
 
