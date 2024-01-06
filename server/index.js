@@ -121,6 +121,10 @@ app.get("/api/geometry/:level_number([0-9])/:factor([0-9]+)/:admin_name", async 
 })
 
 app.get("/api/levels/:countryID([0-9]+)", async (req, res) => {
+    /**
+     * This endpoint returns information about administrative levels in country specified by :countryID. 
+     * Should be queried after /api/countries to find out about available levels in a country.
+     */
     queryLevels = [];
     levelNames = [];
     for(i = 2; i < 12; i++){    //get administrative levels from uri params
@@ -129,8 +133,8 @@ app.get("/api/levels/:countryID([0-9]+)", async (req, res) => {
             queryLevels.push(i);
         }
     }
-    let levels = (await runQuery("CALL GetAdministrativeLevel(?)", [req.params.countryID])).map(obj=>obj.level_number); //get administrative levels from database
-
+    levelInfo = (await runQuery("CALL GetAdministrativeLevel(?)", [req.params.countryID])); //get administrative levels from database
+    let levels = levelInfo.map(obj=>obj.level_number);
     for(i in levelNames){
         if(!levels.find(i)) {
             return res.send("wrong query parameters!");
@@ -139,7 +143,7 @@ app.get("/api/levels/:countryID([0-9]+)", async (req, res) => {
 
 
 
-    return res.json(levels);
+    return res.json(levelInfo);
 })
 
 app.get("/text/:id([0-9]+)", async (req, res) => {
