@@ -6,19 +6,20 @@ geoJSONparser = {
     },
 
     simplifyGeometry : function(geoJson, optimizationFactor){
+        /**
+         * evenly removes most of the points.
+         * the points that remain are roughly in the proportion 1/(optimizationFactor) to all points before optimization.
+         * */
         console.log("entered--");
         let start = Date.now();
         if(geoJson.features != undefined) {
             pointsLeft = new Set([]);   //all points that will not be optimized out
-            nPoints = new Map();
+            nPoints = new Map();    //multipolygonal points
 
 
             for(let feature of geoJson.features){
                 if(feature.geometry.type == 'Polygon' || feature.geometry.type == 'MultiPolygon'){
-                    /**
-                    * counts multipolygonal points (points that belong to more than 2 polygons) and evenly removes most of the points.
-                    * the points that remain are roughly in the proportion 1/(optimizationFactor) to all points before optimization.
-                    */
+                    // counts multipolygonal points (points that belong to more than 2 polygons) and leaves them untouched.
                     for(polygonCordinates of feature.geometry.coordinates){
                         let firstStringifiedPoint = String(feature.geometry.coordinates[0][0]);
                         //count points
@@ -27,7 +28,7 @@ geoJSONparser = {
                         else
                             nPoints.set(firstStringifiedPoint, 1);
                 
-                        //add connecting point
+                        //add connecting point (first point must remain and have the same coordinates as last point).
                         pointsLeft.add(firstStringifiedPoint);
                         let iter = 0;
                         for(let point of polygonCordinates){
@@ -73,6 +74,9 @@ geoJSONparser = {
     },
 
     filterPolygons : function(geoJson) {
+        /**
+         * removes all geometry except polygons and multipolygons.
+         */
         if(geoJson.features != undefined) {
             let featuresOld = geoJson.features;
             geoJson.features = [];
