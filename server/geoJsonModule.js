@@ -57,12 +57,13 @@ geoJSONparser = {
 
             for(let feature of geoJson.features){
                 if(feature.geometry.type == 'Polygon' || feature.geometry.type == 'MultiPolygon'){
-                    for(polygons of feature.geometry.coordinates){
-                        let coordinates = polygons[0];
-                        polygons = [[]];
+                    for(let i = 0; i < feature.geometry.coordinates.length; i++){
+                        let coordinates = feature.geometry.coordinates[i];
+                        feature.geometry.coordinates[i] = [];
                         for(let point of coordinates){
+                            //console.log(point);
                             if(pointsLeft.has(String(point))){
-                                polygons[0].push(point);
+                                feature.geometry.coordinates[i].push(point);
                             }
                         }
                     }
