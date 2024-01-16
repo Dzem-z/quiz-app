@@ -146,19 +146,23 @@ app.get("/api/levels/:countryID([0-9]+)", async (req, res) => {
     return res.json(levelInfo);
 })
 
-app.get("/text/:id([0-9]+)", async (req, res) => {
-    console.log(overpassAPI.getURIbyId(req.params.id))
-    let result = await fetch(
-        "https://overpass-api.de/api/interpreter",
-        {
-            method: "POST",
-            body: "data=" + overpassAPI.getURIbyId(req.params.id)
-        }
-    ).then(
-        (data)=>data.text()
-        );
-    return res.send(result);
-})
+app.get("/api/get_cnt_geom/:factor([0-9]+)", async (req, res) => {
+    queries = [];
+    countries = await runQuery("CALL GetCountries()")
+    
+    for(let country of countries) {
+        queries.push( overpassAPI.getGeometryOfCountry(country.overpass_name, req.params.factor) )
+    };
+
+    let results = await Promise.all(queries);
+    let gJson = {"type": "FeatureCollection",
+    "features": []};
+
+    for(let country of results) {
+        gJson.features = gJson.features.concat(country.features);
+    }
+    return res.json(gJson);
+});
 
 app.get("/api/quizzes/:factor([0-9]+)/:id([0-9]+)", async (req, res) => {   //returns quiz info in geoJson format
 
