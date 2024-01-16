@@ -1,7 +1,7 @@
 USE quizdb;
 
 CALL InsertCountry('Greece', 'Ελλάς');
-SELECT id INTO @id FROM countries WHERE name='Greece' LIMIT 1;  --administrative centers: unknown
+SELECT id INTO @id FROM countries WHERE name='Greece' LIMIT 1;
 INSERT INTO administrative_levels(level_number, name, country_id, has_centre) VALUES 
     (3,"Όρια Αυτόνομης Μοναστικής Πολιτείας Αγίου Όρους", @id, false),
     (4, "Όρια Αποκεντρωμένων Διοικήσεων", @id, false),
@@ -11,8 +11,8 @@ INSERT INTO administrative_levels(level_number, name, country_id, has_centre) VA
     (8, "Όρια Δημοτικών ενοτήτων", @id, false),
     (9, "Όρια Δημοτικών κοινοτήτων (LAU)", @id, false);
 
-CALL InsertCountry('Poland', 'Polska (ląd)');
-SELECT id INTO @id FROM countries WHERE name='Poland' LIMIT 1;  --administrative centers: known
+CALL InsertCountry('Poland', 'Polska');
+SELECT id INTO @id FROM countries WHERE name='Poland' LIMIT 1;
 INSERT INTO administrative_levels(level_number, name, country_id, has_centre) VALUES 
     (4, "województwa (voivodships, provinces, regions)", @id, true),
     (6, "powiaty (counties)", @id, false),
@@ -23,7 +23,7 @@ INSERT INTO administrative_levels(level_number, name, country_id, has_centre) VA
     (11, "boundaries for neighborhoods (osiedla)", @id, false);
 
 CALL InsertCountry('Portugal', 'Portugal');
-SELECT id INTO @id FROM countries WHERE name='Portugal' LIMIT 1; --administrative centers: unknown
+SELECT id INTO @id FROM countries WHERE name='Portugal' LIMIT 1;
 INSERT INTO administrative_levels(level_number, name, country_id, has_centre) VALUES 
     (4, "Autonomous Regions (Regiões autónomas)", @id, true),
     (6, "Districts (Distritos)", @id, false),
@@ -31,7 +31,7 @@ INSERT INTO administrative_levels(level_number, name, country_id, has_centre) VA
     (8, "Civil parishes (Freguesias)", @id, false);
 
 CALL InsertCountry('Germany', 'Deutschland');
-SELECT id INTO @id FROM countries WHERE name='Germany' LIMIT 1; --administrative centers: unknown
+SELECT id INTO @id FROM countries WHERE name='Germany' LIMIT 1;
 INSERT INTO administrative_levels(level_number, name, country_id, has_centre) VALUES 
     (4, "federal states border, Bundesland (NUTS 1)", @id, false),
     (5, "state-district border, Regierungsbezirk (NUTS 2)", @id, false),
@@ -43,7 +43,7 @@ INSERT INTO administrative_levels(level_number, name, country_id, has_centre) VA
     (11, "Neighbourhoods statistical or historical, Stadtviertel etc.", @id, false);
 
 CALL InsertCountry('Czech Republic', 'Česko');
-SELECT id INTO @id FROM countries WHERE name='Czech Republic' LIMIT 1; --administrative centers: unknown
+SELECT id INTO @id FROM countries WHERE name='Czech Republic' LIMIT 1;
 INSERT INTO administrative_levels(level_number, name, country_id, has_centre) VALUES 
     (4, "Statistic regions (NUTS 2)", @id, false),
     (6, "Regions (kraj) (NUTS 3)", @id, false),
