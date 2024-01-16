@@ -61,6 +61,35 @@ const geoJSONparser = require("./geoJsonModule.js");
         return result;
     }
 
+    async getGeometryOfCountry(overpassName, optimizationFactor = 1) {
+        console.log(`
+        [out:json]
+        [timeout:90]
+        ;
+        relation[boundary=administrative][name="${overpassName}"][admin_level=2] -> .a;
+        .a out geom;
+        `)
+        let query = encodeURIComponent(`
+        [out:json]
+        [timeout:90]
+        ;
+        relation[boundary=administrative][name="${overpassName}"][admin_level=2] -> .a;
+        .a out geom;
+        `);
+
+        let result = await this.fetchData(query)
+        .then(
+            (data) => data.json()
+        ).then(
+            (data) => geoJSONparser.parse(data)
+        ).then(
+            (data) => geoJSONparser.simplifyGeometry(data, optimizationFactor)
+        ).then(
+            (data) => geoJSONparser.filterPolygons(data)
+        );
+        return result;
+    }
+
     async fetchData(query) {
         return await fetch(
             "https://overpass-api.de/api/interpreter",
