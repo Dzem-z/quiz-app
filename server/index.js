@@ -29,6 +29,7 @@ app.use(express.static(path.resolve(__dirname, '../client/build')));
 app.get("/api", (req, res) => {
     //test
     res.json({message: "Hello world!"});
+    res.set('Access-Control-Allow-Origin', '*');
 });
 
 app.get("/api/countries", async (req, res) => {
@@ -47,6 +48,7 @@ app.get("/api/countries", async (req, res) => {
      */
     let countries = await runQuery("CALL GetCountries()");
     console.log("fetched countries from database");
+    res.set('Access-Control-Allow-Origin', '*');
     return res.json(countries);
 })
 
@@ -77,6 +79,7 @@ app.get("/api/administratives/:level_number([0-9]+)/:admin_name", async (req,res
      * }
      */
     let response = await overpassAPI.getAdministratives(req.params.admin_name, req.params.level_number);
+    res.set('Access-Control-Allow-Origin', '*');
     return res.send(response);
 })
 
@@ -117,6 +120,7 @@ app.get("/api/geometry/:level_number([0-9])/:factor([0-9]+)/:admin_name", async 
      * }
      */
     let response = await overpassAPI.getGeometry(req.params.admin_name, req.params.level_number, req.params.factor);
+    res.set('Access-Control-Allow-Origin', '*');
     return res.send(response);
 })
 
@@ -142,7 +146,7 @@ app.get("/api/levels/:countryID([0-9]+)", async (req, res) => {
     }
 
 
-
+    res.set('Access-Control-Allow-Origin', '*');
     return res.json(levelInfo);
 })
 
@@ -167,6 +171,7 @@ app.get("/api/get_cnt_geom/:factor([0-9]+)", async (req, res) => {
 app.get("/api/quizzes/:factor([0-9]+)/:id([0-9]+)", async (req, res) => {   //returns quiz info in geoJson format
 
         let result = await overpassAPI.fetchQuiz(req.params.id, req.params.factor);
+        res.set('Access-Control-Allow-Origin', '*');
         return res.json(result);
     
 })
