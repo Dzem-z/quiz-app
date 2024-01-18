@@ -24,7 +24,7 @@ const app = express();
 const overpassAPI = new overpass();
 
 
-app.use(express.static(path.resolve(__dirname, '../client/build')));
+app.use(express.static(path.resolve(__dirname, '../client')));
 
 app.get("/api", (req, res) => {
     //test
@@ -178,7 +178,7 @@ app.get("/api/quizzes/:factor([0-9]+)/:id([0-9]+)", async (req, res) => {   //re
 })
 
 app.get('/', (req, res) => {    //home (main page)
-    res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
+    res.sendFile(path.resolve(__dirname, '../client', 'index.html'));
 })
 
 app.listen(PORT, () => {
