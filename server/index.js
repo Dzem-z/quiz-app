@@ -83,7 +83,7 @@ app.get("/api/administratives/:level_number([0-9]+)/:admin_name", async (req,res
     return res.send(response);
 })
 
-app.get("/api/geometry/:level_number([0-9])/:factor([0-9]+)/:admin_name", async (req,res) => {
+app.get("/api/geometry/:level_number([0-9]+)/:factor([0-9]+)/:admin_name", async (req,res) => {
     /**
      * This endpoint sends geometry for all administrative regions at the level specified with :level_number within region with :name string specified as :admin_name.
      * (Notice that country name is also an admin_name). Geometry is defined in geojson format as polygons or multipolygons. Vertices are optimized out with :factor variable.
@@ -165,6 +165,7 @@ app.get("/api/get_cnt_geom/:factor([0-9]+)", async (req, res) => {
     for(let country of results) {
         gJson.features = gJson.features.concat(country.features);
     }
+    res.set('Access-Control-Allow-Origin', '*');
     return res.json(gJson);
 });
 
