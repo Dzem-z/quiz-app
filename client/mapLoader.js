@@ -1,5 +1,5 @@
 import { QuizChooser } from "./quizChooser.js";
-import { QuizHandler } from "./quizHandler.js";
+import {STYLES} from "./polygonStyles.js";
 
 export class MapLoader {
 
@@ -23,6 +23,10 @@ export class MapLoader {
         this.eventHandler = new QuizChooser(this, this.info.getContainer());
     }
 
+    addToMap = function (object) {
+        object.addTo(this.map);
+    }
+
     loadData = function (mapData) {
 
         if(this.geojson != undefined)
@@ -35,9 +39,12 @@ export class MapLoader {
                 mouseout: eventHandler.resetHighlight,
                 click: eventHandler.handleClick
             });
+
+            layer.setStyle(STYLES.basic);
         }        
                             
         this.geojson = L.geoJson(mapData,{onEachFeature}).addTo(this.map);
+        this.map.fitBounds(this.geojson.getBounds());
     }
 
     getCountryId = function (name) {
