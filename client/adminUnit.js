@@ -14,7 +14,6 @@ export class AdminUnit extends MapArea {
 
         let mapData = {features: []};
         let divisionLevels = this.divisionLevels;
-        alert(adminName);
 
         while (mapData.features.length == 0) {
             if (divisionLevels.length <= 1) {

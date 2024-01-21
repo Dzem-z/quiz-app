@@ -54,8 +54,6 @@ export class QuizChooser extends EventHandler {
             return;
         }
 
-        alert(nextAdminUnit.mapData.features.length);
-
         this.mapArea = nextAdminUnit;
         this.removeButtons();
         this.loadAdminUnit();
