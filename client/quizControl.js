@@ -1,3 +1,7 @@
+import { FunctionWithTimeout } from "./funcWithTimeout.js";
+
+const SECOND_LINE = "Click area on the map";
+
 export let QuizControl = L.Control.extend({
 
     onAdd: function (map) {
@@ -7,16 +11,22 @@ export let QuizControl = L.Control.extend({
     },
 
     setUp: function () {
-        this._div.innerHTML = "<h4>Click <i></i></h4><span>Click area on the map</span>";
+        this._div.innerHTML = "<h4>Click <i></i></h4><span>" + SECOND_LINE + "</span>";
+        this.timeoutFunc = undefined;
     },
 
     setPrompt: function (name) {
         this.getContainer().firstChild.lastChild.innerHTML = name;
     },
     
-    printResult: function (result) {
+    printResult: function (result, time) {
         this.getContainer().lastChild.innerHTML = result ? 'Correct!' : 'Wrong';
         this.getContainer().lastChild.style.color = result ? 'green' : 'red';
+    },
+
+    resetAfterPrinting: function () {
+        this.getContainer().lastChild.innerHTML = SECOND_LINE;
+        this.getContainer().lastChild.style.color = null;
     }
 
 });

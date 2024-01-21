@@ -18,7 +18,10 @@ export class QuizChooser extends EventHandler {
         this.info.children[2].addEventListener("click", async () => {
             let mapData = await DATA_FETCHER.fetchCountriesGeometries();
             mapData = mapData.features;
-            this.loader.eventHandler = new QuizHandler(mapData.map((feature) => feature.properties.name), this.info);
+            this.info.remove();
+            let control = new QuizControl();
+            this.loader.addToMap(control);
+            this.loader.eventHandler = new QuizHandler(mapData.map((feature) => feature.properties.name), control);
             this.loader.loadData(mapData)});
     }
     

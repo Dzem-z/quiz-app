@@ -21,11 +21,15 @@ export const STYLES = {
     },
 
     correctGuess: {
-        
+        fillColor: "green"
     },
 
     wrongGuess: {
+        fillColor: "red"
+    },
 
+    resetAfterGuess: {
+        fillColor: '#FEB24C'
     }
 
 }
