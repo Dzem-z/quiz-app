@@ -8,10 +8,11 @@ const RESULT_PRINT_TIME = 2000;
 export class QuizHandler extends EventHandler{
 
 
-    constructor(names, control) {
+    constructor(names, control, loader) {
         super();
         this.names = new QuizData(names);
         this.control = control;
+        this.loader = loader;
         this.iterator = this.names[Symbol.iterator]();
         this.toGuess = this.iterator.next().value;
         this.resetFunction = undefined;

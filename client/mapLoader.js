@@ -1,14 +1,17 @@
 import { QuizChooser } from "./quizChooser.js";
-import {STYLES} from "./polygonStyles.js";
+import { STYLES } from "./polygonStyles.js";
+import { QuizHandler } from "./quizHandler.js";
+import { QuizControl } from "./quizControl.js";
+import { createWorld } from "./world.js";
 
 export class MapLoader {
 
-    constructor(map, countries) {
+    constructor(map, world) {
         this.info = L.control();
         let info = this.info;
 
         info.onAdd = function (map) {
-            this._div = L.DomUtil.create('div', 'info');
+            this._div = L.DomUtil.create('div', 'control');
             this.setUp();
             return this._div;
         };
@@ -19,12 +22,28 @@ export class MapLoader {
         info.addTo(map);
 
         this.map = map;
-        this.countries = countries;
         this.eventHandler = new QuizChooser(this, this.info.getContainer());
+        this.eventHandler.mapArea = world;
+        this.eventHandler.loadAdminUnit();
+    }
+
+    loadChooser = function () {
+        let chooserControl = L.ChooserControl();
+        this.addToMap(chooserControl);
+        this.eventHandler = new QuizChooser(this, chooserControl);
     }
 
     addToMap = function (object) {
         object.addTo(this.map);
+    }
+
+    loadQuiz = function (mapData) {
+        mapData = mapData.features;
+        mapData = mapData.filter((feature) => "name" in feature.properties);
+        let control = new QuizControl();
+        this.addToMap(control);
+        this.eventHandler = new QuizHandler(mapData.map((feature) => feature.properties.name), control, this);
+        this.loadData(mapData);
     }
 
     loadData = function (mapData) {
@@ -46,9 +65,9 @@ export class MapLoader {
         this.geojson = L.geoJson(mapData,{onEachFeature}).addTo(this.map);
         this.map.fitBounds(this.geojson.getBounds());
     }
+}
 
-    getCountryId = function (name) {
-        let country = this.countries.filter((country) => {return country.overpass_name === name; })[0];
-        return country.id;
-    }
+export let createMapLoader = async function (map) {
+    let world = await createWorld();
+    return new MapLoader(map, world);
 }

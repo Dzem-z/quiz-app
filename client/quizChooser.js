@@ -1,8 +1,8 @@
 import { DATA_FETCHER } from "./dataFetcher.js";
 import { EventHandler } from "./eventHandler.js";
+import {World, createWorld} from "./world.js"
+import { AdminUnit } from "./adminUnit.js";
 import {STYLES} from "./polygonStyles.js";
-import { QuizControl } from "./quizControl.js";
-import { QuizHandler } from "./quizHandler.js";
 
 export class QuizChooser extends EventHandler {
 
@@ -10,46 +10,55 @@ export class QuizChooser extends EventHandler {
         super();
         this.loader = loader;
         this.info = info;
-        this.info.innerHTML = `<h4>World</h4>
+        this.info.innerHTML = `<h4></h4>
             Choose quiz<br>
-            <button>countries</button><br>
             or click an area on the map<br>
             to have a quiz from there`;
-        this.info.children[2].addEventListener("click", async () => {
-            let mapData = await DATA_FETCHER.fetchCountriesGeometries();
-            mapData = mapData.features;
-            this.info.remove();
-            let control = new QuizControl();
-            this.loader.addToMap(control);
-            this.loader.eventHandler = new QuizHandler(mapData.map((feature) => feature.properties.name), control);
-            this.loader.loadData(mapData)});
+    }
+
+    loadAdminUnit = function() {
+        this.loader.loadData(this.mapArea.getMapData().features);
+        this.info.firstElementChild.innerHTML = this.mapArea.getAreaName();
+        this.loadButtons(this.mapArea.getButtonsData());
+    }
+
+    loadButtons = function(buttonsData) {
+        for(let level of buttonsData) {
+            let button = document.createElement('button');
+            let br = document.createElement('br');
+            button.innerHTML = level.name;
+            button.addEventListener("click", async () => {
+                let mapData = await level.fetcher();
+                if (mapData.features.length == 0) {
+                    alert(`No areas of this type here!
+                        Pick another quiz`);
+                        return;
+                }
+                this.info.remove();
+                this.loader.loadQuiz(mapData);
+            })
+            let index = this.info.childElementCount-2;
+            this.info.children[index].after(button);
+            this.info.children[index+1].after(br);
+        }
     }
     
     handleClick = async (e) => {
-        if (this.divisionLevels != undefined && this.divisionLevels.length == 0) {
+        
+        let layer = e.target;
+        let adminName = layer.feature.properties.name;
+        let nextAdminUnit = await this.mapArea.getNextAdminUnit(adminName);
+        
+        if (nextAdminUnit === null) {
             alert("No further division for this area");
             return;
         }
 
-        let layer = e.target;
-        let adminName = layer.feature.properties.name;
+        alert(nextAdminUnit.mapData.features.length);
 
-        if (layer.feature.properties.admin_level == 2) {
-            let countryId = this.loader.getCountryId(adminName);
-            this.divisionLevels = await DATA_FETCHER.fetchCountryDivisionLevels(countryId);
-            let arr = [1];
-            this.divisionLevels = arr.concat(this.divisionLevels);
-        }
-        
-        let nextLevelMapData = await this.getMapDataForNextLevel(adminName);
-        if(nextLevelMapData === null) return;
-        let mapData = nextLevelMapData.mapData;
-        this.divisionLevels.splice(0, nextLevelMapData.levelsSkipped);
+        this.mapArea = nextAdminUnit;
         this.removeButtons();
-        this.addButtons(adminName);
-        this.info.firstChild.innerHTML = adminName;
-        mapData = mapData.features;
-        this.loader.loadData(mapData)
+        this.loadAdminUnit();
     }
 
     removeButtons = () => {
@@ -59,48 +68,5 @@ export class QuizChooser extends EventHandler {
             button.nextElementSibling.remove();
             button.remove();
         }
-    }
-
-    addButtons = (adminName) => {
-        for(let level of this.divisionLevels) {
-            let button = document.createElement('button');
-            let br = document.createElement('br');
-            button.innerHTML = level.name;
-            button.addEventListener("click", async () => {
-                let mapData = await DATA_FETCHER.fetchAdministratives(level.level_number, adminName);
-                mapData = mapData.features;
-                if (mapData.length == 0) {
-                    alert(`No areas of this type here!
-                        Pick another quiz`);
-                        return;
-                }
-                this.info.remove();
-                let control = new QuizControl();
-                this.loader.addToMap(control);
-                this.loader.eventHandler = new QuizHandler(mapData.map((feature) => feature.properties.name), control);
-                this.loader.loadData(mapData)});
-            this.info.append(button);
-            this.info.append(br);
-        }
-    }
-
-    getMapDataForNextLevel = async (adminName) => {
-        let mapData = {features: []};
-        let nextDivisionLevelIndex = 0;
-
-        while (mapData.features.length == 0) {
-            ++nextDivisionLevelIndex;
-            if (nextDivisionLevelIndex >= this.divisionLevels.length) {
-                alert("No further division for this area");
-                return null;
-            }
-            let nextLevelNumber = this.divisionLevels[nextDivisionLevelIndex].level_number;
-            mapData = await DATA_FETCHER.fetchAdministratives(nextLevelNumber, adminName);
-        }
-
-        return {
-            levelsSkipped: nextDivisionLevelIndex,
-            mapData: mapData
-        };
     }
 }

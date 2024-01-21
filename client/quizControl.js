@@ -1,18 +1,15 @@
-import { FunctionWithTimeout } from "./funcWithTimeout.js";
-
 const SECOND_LINE = "Click area on the map";
 
 export let QuizControl = L.Control.extend({
 
     onAdd: function (map) {
-        this._div = L.DomUtil.create('div', 'info');
+        this._div = L.DomUtil.create('div', 'control');
         this.setUp();
         return this._div;
     },
 
     setUp: function () {
         this._div.innerHTML = "<h4>Click <i></i></h4><span>" + SECOND_LINE + "</span>";
-        this.timeoutFunc = undefined;
     },
 
     setPrompt: function (name) {
