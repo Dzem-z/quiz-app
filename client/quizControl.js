@@ -27,7 +27,3 @@ export let QuizControl = L.Control.extend({
     }
 
 });
-
-L.QuizControl = function () {
-    return new QuizControl();
-}
