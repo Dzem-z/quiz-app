@@ -1,7 +1,4 @@
-import { DATA_FETCHER } from "./dataFetcher.js";
 import { EventHandler } from "./eventHandler.js";
-import {World, createWorld} from "./world.js"
-import { AdminUnit } from "./adminUnit.js";
 import {STYLES} from "./polygonStyles.js";
 
 export class QuizChooser extends EventHandler {

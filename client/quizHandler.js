@@ -2,6 +2,7 @@ import { QuizData } from "./quizData.js";
 import {STYLES} from "./polygonStyles.js";
 import { EventHandler } from "./eventHandler.js";
 import { FunctionWithTimeout } from "./funcWithTimeout.js";
+import { ResultsBanner } from "./resultsBanner.js";
 
 const RESULT_PRINT_TIME = 2000;
 
@@ -37,9 +38,20 @@ export class QuizHandler extends EventHandler{
             let nextIt = this.iterator.next();
             this.toGuess = nextIt.value;
             if (nextIt.value === undefined)
-                alert("Congratulations, you've won!");
+                this.showSummary();
             this.control.setPrompt(this.toGuess);
         }
+    }
+
+    showSummary = () => {
+        this.control.remove();
+        this.banner = new ResultsBanner();
+        this.loader.addToMap(this.banner);
+    }
+
+    removeBanner = () => {
+        if (this.banner != undefined)
+            this.banner.getContainer().remove();
     }
 
     showResult = (layer, result) => {

@@ -4,14 +4,34 @@ import { STYLES } from "./polygonStyles.js";
 import { QuizHandler } from "./quizHandler.js";
 import { QuizControl } from "./quizControl.js";
 import { createWorld } from "./world.js";
+import { ReturnButton } from "./returnButton.js";
 
 export class MapLoader {
 
     constructor(map) {
         this.map = map;
-    }
+        this.backButton = L.control();
+        this.started = false;
+        this.backButton.setPosition("bottomright");
 
+        this.backButton.onAdd = (map) => {
+            this._div = L.DomUtil.create('div', 'control');
+            let button = new ReturnButton({name: "Back to Quiz Choosing", fetcher: null}, this);
+            this._div.append(button.getElement());
+            return this._div;
+        };
+
+    }
+    
     loadChooser = function (world) {
+        if(this.started === false) {
+            this.addToMap(this.backButton);
+            this.started = true;
+        }
+        if (this.eventHandler != undefined) {
+            this.eventHandler.removeBanner();
+            this.eventHandler.removeControl();
+        } 
         let chooserControl = new ChooserControl();
         chooserControl.setLoader(this);
         this.addToMap(chooserControl);
@@ -25,6 +45,8 @@ export class MapLoader {
     }
 
     loadQuiz = function (mapData) {
+        if (this.eventHandler != undefined) 
+            this.eventHandler.removeControl();
         mapData = mapData.features;
         mapData = mapData.filter((feature) => "name" in feature.properties);
         let control = new QuizControl();

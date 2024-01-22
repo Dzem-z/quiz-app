@@ -12,4 +12,11 @@ export class EventHandler {
         let layer = e.target
         layer.setStyle(STYLES.unhovered);
     }
+
+    removeControl = () => {
+        if (this.control != undefined)
+            this.control.getContainer().remove();
+    }
+
+    removeBanner = () => {}
 }

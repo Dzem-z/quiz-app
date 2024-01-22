@@ -1,8 +1,11 @@
+import { QuizLoaderButton } from "./quizLoaderButton.js";
+
 export let ChooserControl = L.Control.extend({
     
     onAdd: function (map) {
         this._div = L.DomUtil.create('div', 'control');
         this.setUp();
+        this.loading = false;
         return this._div;
     },
 
@@ -21,21 +24,16 @@ export let ChooserControl = L.Control.extend({
         this.getContainer().firstChild.innerHTML = name;
     },
 
+    loadQuiz: function (mapData) {
+        this.loader.loadQuiz(mapData);
+    },
+
     loadButtons: function (buttonsData) {
         for(let level of buttonsData) {
-            let button = document.createElement('button');
+            let button = new QuizLoaderButton(level, this);
             let br = document.createElement('br');
-            button.innerHTML = level.name;
-            button.addEventListener("click", async () => {
-                let mapData = await level.fetcher();
-                if (mapData.features.length == 0) {
-                    alert(`No areas of this type here!
-                        Pick another quiz`);
-                        return;
-                }
-                this.getContainer().remove();
-                this.loader.loadQuiz(mapData);
-            })
+            button = button.getElement();
+
             let index = this.getContainer().childElementCount-2;
             this.getContainer().children[index].after(button);
             this.getContainer().children[index+1].after(br);

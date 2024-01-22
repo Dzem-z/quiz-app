@@ -1,5 +1,5 @@
 import { DATA_FETCHER } from "./dataFetcher.js";
-import { createMapLoader } from "./mapLoader.js";
+import { MapLoader } from "./mapLoader.js";
 import { createWorld } from "./world.js";
 
 const map = L.map('map');
