@@ -1,9 +1,9 @@
 # Quiz App
 Quiz App is a web application for geographical quizzes based on openstreetmap data.
 
-Application enables user to pick a quiz about administrative division of a specific area by selecting an area on the map where the quiz will be based and then selecting administrative units to be guessed in the quiz.
+Application enables users to pick a quiz about the administrative division of a specific area by selecting an area on the map where the quiz will be based and then selecting administrative units to be guessed in the quiz.
 
-In the quiz user is prompted to click areas on the map given their name. User answers by clicking appropriate areas on the map until all of the areas are guessed.
+In the quiz, a user is prompted to click areas on the map given their name. The user answers by clicking appropriate areas on the map until all of the areas are guessed.
 
 ## Installation
 In order to install quiz-app you need to have npm(node) installed and sql daemon as well on your computer.
@@ -19,6 +19,14 @@ and then to start:
 ```
 npm run start
 ```
+## Running on docker
+This project can run inside a Docker container. To execute it, you need to have a Docker engine installed. Deployment involves the app container, a MySQL database container, and a Docker network. 
+
+The recommended deployment method is to run the following command from the project's home directory:
+```
+docker compose up
+```
+
 
 ## Server side 
 Application fetches openstreetmap data regarding administrative units using OverpassAPI. Data about available countries are stored on the server in a database.
