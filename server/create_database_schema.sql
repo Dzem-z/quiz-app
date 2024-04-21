@@ -1,6 +1,6 @@
 CREATE DATABASE IF NOT EXISTS quizdb;
-CREATE USER IF NOT EXISTS 'quiz'@'localhost' IDENTIFIED BY 'quiz_password';
-GRANT ALL PRIVILEGES ON quizdb.* TO 'quiz'@'localhost';
+CREATE USER IF NOT EXISTS 'quiz'@'%' IDENTIFIED BY 'quiz_password';
+GRANT ALL PRIVILEGES ON quizdb.* TO 'quiz'@'%';
 USE quizdb;
 
 
