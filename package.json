@@ -8,6 +8,7 @@
   },
   "scripts": {
     "init": "mysql < server/create_database_schema.sql",
+    "populate": "mysql < server/populate_database.sql",
     "start": "node server/index.js"
   }
 }
