@@ -1,0 +1,29 @@
+services:
+  quizdb:
+    image: mysql:8.3.0
+    container_name: quizdb
+    ports:
+      - "3306:3306"
+    networks:
+      - quiz
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+    healthcheck:
+      test: ["CMD", "mysql", "-u", "root", "-h", "quizdb.quiz"]
+      interval: 1m30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+  app:
+    build: .
+    container_name: app
+    ports:
+      - "3000:3000"
+    depends_on:
+      quizdb:
+        condition: service_healthy
+    networks:
+      - quiz
+networks:
+  quiz:
+    name: quiz
