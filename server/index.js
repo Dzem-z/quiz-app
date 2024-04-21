@@ -2,13 +2,14 @@ const path = require("path");
 const express = require("express");
 const overpass = require("./overpassModule");
 const mysql = require("mysql2");
+const argv = require('minimist')(process.argv.slice(2));
 
 
-const PORT = process.env.PORT || 3000;
-const HOSTNAME = '127.0.0.1'; //hardcoded
-const DATABASE_USERNAME = 'quiz';
-const DATABASE_PASSWORD = 'quiz_password';
-const DATABASE_NAME = 'quizdb';
+const PORT = argv.port || process.env.PORT || 3000;
+const HOSTNAME = argv.database_host || '127.0.0.1'; //hardcoded
+const DATABASE_USERNAME = argv.database_username || 'quiz';
+const DATABASE_PASSWORD = argv.database_password || 'quiz_password';
+const DATABASE_NAME = argv.database_name || 'quizdb';
 
 const pool = mysql.createPool({
     host : HOSTNAME,
