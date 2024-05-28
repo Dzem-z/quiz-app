@@ -25,10 +25,20 @@
 
 		#loadingScreen {
 			display: none;
+			position: absolute;
 			height: 100%;
 			width: 100%;
+			z-index: 10;
+			background: rgba( 225, 206, 196, 0.3 );
+			backdrop-filter: blur( 9px );
+			-webkit-backdrop-filter: blur( 9px );
 			max-width: 100%;
 			max-height: 100%;
+		}
+
+		#map {
+			position: absolute;
+			z-index: 0;
 		}
 
 		.center {
@@ -42,14 +52,15 @@
 		}
 	</style>
 	<link rel="stylesheet" href="styles.css">
-
+	<link rel="stylesheet" href="loader.css">
 	
 </head>
 <body>
 <div id="loadingScreen">
-	<div id="loadingText" class="center">
-
+	<div class="center">
+		<div class="loader"></div>
 	</div>
+	
 </div>
 <div id='map'></div>
 
