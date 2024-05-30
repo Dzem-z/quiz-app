@@ -1,5 +1,6 @@
 import { EventHandler } from "./eventHandler.js";
 import {STYLES} from "./polygonStyles.js";
+import { loadingScreenSwapper } from "./loadingScreenSwapper.js";
 
 export class QuizChooser extends EventHandler {
 
@@ -18,7 +19,8 @@ export class QuizChooser extends EventHandler {
 
     
     handleClick = async (e) => {
-        
+        loadingScreenSwapper.startLoad();
+
         let layer = e.target;
         let adminName = layer.feature.properties.name;
         let nextAdminUnit = await this.mapArea.getNextAdminUnit(adminName);
@@ -30,5 +32,7 @@ export class QuizChooser extends EventHandler {
 
         this.mapArea = nextAdminUnit;
         this.loadAdminUnit();
+
+        loadingScreenSwapper.endLoad();
     }
 }

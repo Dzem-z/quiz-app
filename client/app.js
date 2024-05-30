@@ -3,7 +3,7 @@ import { MapLoader } from "./mapLoader.js";
 import { createWorld } from "./world.js";
 import { loadingScreenSwapper } from "./loadingScreenSwapper.js";
 
-loadingScreenSwapper.startLoad();
+//loadingScreenSwapper.startLoad();
 const map = L.map('map');
 //L.control.scale().addTo(map);
 //map.setMinZoom(0);
@@ -17,4 +17,4 @@ const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map);
 
-loadingScreenSwapper.endLoad();
+//loadingScreenSwapper.endLoad();
