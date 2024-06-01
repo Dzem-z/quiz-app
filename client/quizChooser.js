@@ -1,5 +1,5 @@
 import { EventHandler } from "./eventHandler.js";
-import {STYLES} from "./polygonStyles.js";
+import {STYLES} from "./polygonStyles.js"
 
 export class QuizChooser extends EventHandler {
 
@@ -18,7 +18,6 @@ export class QuizChooser extends EventHandler {
 
     
     handleClick = async (e) => {
-        
         let layer = e.target;
         let adminName = layer.feature.properties.name;
         let nextAdminUnit = await this.mapArea.getNextAdminUnit(adminName);

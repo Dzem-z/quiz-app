@@ -21,6 +21,7 @@ export class QuizLoaderButton extends AbstractButton {
             this.control.loading = false;
             return null;
         }
+        
         return mapData;
     }
 }
