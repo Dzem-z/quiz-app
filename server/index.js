@@ -2,7 +2,9 @@ const path = require("path");
 const express = require("express");
 const overpass = require("./overpassModule");
 const mysql = require("mysql2");
+const { errorHandler } = require("./errorHandler");
 const argv = require('minimist')(process.argv.slice(2));
+
 
 
 const PORT = argv.port || process.env.PORT || 3000;
@@ -80,8 +82,10 @@ app.get("/api/administratives/:level_number([0-9]+)/:admin_name", async (req,res
      * }
      */
     let response = await overpassAPI.getAdministratives(req.params.admin_name, req.params.level_number);
+    if(response.error != undefined)
+        res.status(500);
     res.set('Access-Control-Allow-Origin', '*');
-    return res.send(response);
+    return res.send(response.result);
 })
 
 app.get("/api/geometry/:level_number([0-9]+)/:factor([0-9]+)/:admin_name", async (req,res) => {
@@ -121,8 +125,10 @@ app.get("/api/geometry/:level_number([0-9]+)/:factor([0-9]+)/:admin_name", async
      * }
      */
     let response = await overpassAPI.getGeometry(req.params.admin_name, req.params.level_number, req.params.factor);
+    if(response.error != undefined)
+        res.status(500);
     res.set('Access-Control-Allow-Origin', '*');
-    return res.send(response);
+    return res.send(response.result);
 })
 
 app.get("/api/levels/:countryID([0-9]+)", async (req, res) => {
@@ -156,7 +162,7 @@ app.get("/api/get_cnt_geom/:factor([0-9]+)", async (req, res) => {
     countries = await runQuery("CALL GetCountries()")
     
     for(let country of countries) {
-        queries.push( overpassAPI.getGeometryOfCountry(country.overpass_name, req.params.factor) )
+        queries.push(overpassAPI.getGeometryOfCountry(country.overpass_name, req.params.factor));
     };
 
     let results = await Promise.all(queries);
@@ -164,7 +170,9 @@ app.get("/api/get_cnt_geom/:factor([0-9]+)", async (req, res) => {
     "features": []};
 
     for(let country of results) {
-        gJson.features = gJson.features.concat(country.features);
+        if(country.error != undefined)
+            res.status(500);
+        gJson.features = gJson.features.concat(country.result?.features);
     }
     res.set('Access-Control-Allow-Origin', '*');
     return res.json(gJson);

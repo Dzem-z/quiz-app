@@ -25,7 +25,11 @@ const geoJSONparser = require("./geoJsonModule.js");
 
         let result = await this.fetchData(query)
         .then(
-            (data)=>data.json()
+            (data) => data.json()
+        ).then(
+            (data) => {return {result:data, error:undefined}}
+        ).catch(
+            (error) => {return {result:undefined, error:this.errorHandler(error)}}
         );
         return result;
     };
@@ -57,6 +61,10 @@ const geoJSONparser = require("./geoJsonModule.js");
             (data) => geoJSONparser.simplifyGeometry(data, optimizationFactor)
         ).then(
             (data) => geoJSONparser.filterPolygons(data)
+        ).then(
+            (data) => {return {result:data, error:undefined}}
+        ).catch(
+            (error) => {return {result:undefined, error:this.errorHandler(error)}}
         );
         return result;
     }
@@ -86,8 +94,40 @@ const geoJSONparser = require("./geoJsonModule.js");
             (data) => geoJSONparser.simplifyGeometry(data, optimizationFactor)
         ).then(
             (data) => geoJSONparser.filterPolygons(data)
+        ).then(
+            (data) => {return {result:data, error:undefined}}
+        ).catch(
+            (error) => {return {result:undefined, error:this.errorHandler(error)}}
         );
         return result;
+    }
+
+    errorHandler(error) {
+        console.log(error);
+    
+        if(error instanceof TypeError && error.message == "fetch failed") {
+            return error;
+        } else if(error instanceof SyntaxError) {
+            return error;
+        } else {
+            throw error;
+        }
+    }
+
+    async waitForConnection(fetchFunc, ...args) {
+        let response;
+        try{
+            response = await fetchFunc(...args)
+        } catch (error) {
+            console.log("There was an error.", error.name, error.message)
+        }
+
+        if (response?.ok) {
+            console.log('Use the response here!');
+        } else {
+            console.log(`HTTP Response Code: ${response?.status}`)
+        }
+        return response;  
     }
 
     async fetchData(query) {
