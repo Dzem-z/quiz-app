@@ -1,5 +1,4 @@
 import { AbstractButton } from "./abstractButton.js";
-import { loadingScreenSwapper } from "./loadingScreenSwapper.js";
 
 export class QuizLoaderButton extends AbstractButton {
     constructor(buttonData, control) {
@@ -12,8 +11,6 @@ export class QuizLoaderButton extends AbstractButton {
     }
 
     fetch = async function (fetcher) {
-        loadingScreenSwapper.startLoad();
-
         if (this.control.loading)
             return null;
         this.control.loading = true;
@@ -24,9 +21,7 @@ export class QuizLoaderButton extends AbstractButton {
             this.control.loading = false;
             return null;
         }
-
         
-        loadingScreenSwapper.endLoad();
         return mapData;
     }
 }

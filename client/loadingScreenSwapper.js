@@ -12,6 +12,24 @@ class LoadingScreenSwapper {
         this.loadingElement.style.display = "none";
     }
     
+};
+
+function loadingScreenDecorator(func) {
+    const loadingScreen = new LoadingScreenSwapper();
+    return async function(...args) {
+        loadingScreen.startLoad();
+        let result;
+        try {
+            result = await func(...args);
+        } catch (error) {
+            loadingScreen.endLoad();
+            throw error;
+        }
+        
+        loadingScreen.endLoad();
+
+        return result;
+    }
 }
 
-export const loadingScreenSwapper = new LoadingScreenSwapper();
+export {loadingScreenDecorator}

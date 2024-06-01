@@ -1,6 +1,5 @@
 import { DATA_FETCHER } from "./dataFetcher.js";
 import { MapArea } from "./mapArea.js";
-import { loadingScreenSwapper } from "./loadingScreenSwapper.js";
 
 export class AdminUnit extends MapArea {
 
@@ -12,7 +11,6 @@ export class AdminUnit extends MapArea {
     }
 
     getNextAdminUnit = async (adminName) => {
-        loadingScreenSwapper.startLoad();
 
         let mapData = {features: []};
         let divisionLevels = this.divisionLevels;
@@ -26,7 +24,6 @@ export class AdminUnit extends MapArea {
             divisionLevels.splice(0,1);
         }
 
-        loadingScreenSwapper.startLoad();
         return new AdminUnit(adminName, divisionLevels, mapData);
     }
 
