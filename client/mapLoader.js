@@ -5,6 +5,7 @@ import { QuizHandler } from "./quizHandler.js";
 import { QuizControl } from "./quizControl.js";
 import { createWorld } from "./world.js";
 import { ReturnButton } from "./returnButton.js";
+import { getInstance } from "./mapTileLayerControl.js";
 
 export class MapLoader {
 
@@ -32,6 +33,7 @@ export class MapLoader {
             this.eventHandler.removeBanner();
             this.eventHandler.removeControl();
         } 
+        getInstance().turnOn();
         let chooserControl = new ChooserControl();
         chooserControl.setLoader(this);
         this.addToMap(chooserControl);
@@ -49,6 +51,7 @@ export class MapLoader {
             this.eventHandler.removeControl();
         mapData = mapData.features;
         mapData = mapData.filter((feature) => "name" in feature.properties);
+        getInstance().turnOff();
         let control = new QuizControl();
         this.addToMap(control);
         this.eventHandler = new QuizHandler(mapData.map((feature) => feature.properties.name), control, this);
