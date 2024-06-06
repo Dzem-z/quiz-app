@@ -2,7 +2,6 @@ const path = require("path");
 const express = require("express");
 const overpass = require("./overpassModule");
 const mysql = require("mysql2");
-const { errorHandler } = require("./errorHandler");
 const argv = require('minimist')(process.argv.slice(2));
 
 
