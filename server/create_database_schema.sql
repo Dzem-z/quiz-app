@@ -7,7 +7,8 @@ USE quizdb;
 CREATE TABLE IF NOT EXISTS countries (
     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
     name VARCHAR(1000) NOT NULL, 
-    overpass_name VARCHAR(1000) NOT NULL
+    overpass_name VARCHAR(1000) NOT NULL,
+    wikidata VARCHAR(1000)
     );
 
 CREATE TABLE IF NOT EXISTS administrative_levels (
@@ -27,11 +28,12 @@ DELIMITER $$
 
 CREATE PROCEDURE InsertCountry(
     IN name VARCHAR(1000),
-    IN overpass_name VARCHAR(1000)
+    IN overpass_name VARCHAR(1000),
+    IN wikidata VARCHAR(1000)
 )
 BEGIN
-    INSERT INTO countries(name, overpass_name) 
-    VALUE (name, overpass_name);
+    INSERT INTO countries(name, overpass_name, wikidata) 
+    VALUE (name, overpass_name, wikidata);
 END $$
 
 DELIMITER ;

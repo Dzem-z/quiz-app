@@ -54,7 +54,7 @@ app.get("/api/countries", async (req, res) => {
     return res.json(countries);
 })
 
-app.get("/api/administratives/:level_number([0-9]+)/:admin_name", async (req,res) => {
+app.get("/api/administratives/:level_number([0-9]+)/:admin_name/:wikidata?", async (req,res) => {
     /**
      * This endpoint sends all administrative regions on a certain administrative level specified as :level_number within region with :name string specified as :admin_name 
      * (Notice that country name is also an admin_name).
@@ -80,14 +80,14 @@ app.get("/api/administratives/:level_number([0-9]+)/:admin_name", async (req,res
      *  ]
      * }
      */
-    let response = await overpassAPI.getAdministratives(req.params.admin_name, req.params.level_number);
+    let response = await overpassAPI.getAdministratives(req.params.admin_name, req.params.level_number, req.params.wikidata);
     if(response.error != undefined)
         res.status(500);
     res.set('Access-Control-Allow-Origin', '*');
     return res.send(response.result);
 })
 
-app.get("/api/geometry/:level_number([0-9]+)/:factor([0-9]+)/:admin_name", async (req,res) => {
+app.get("/api/geometry/:level_number([0-9]+)/:factor([0-9]+)/:admin_name/:wikidata?", async (req,res) => {
     /**
      * This endpoint sends geometry for all administrative regions at the level specified with :level_number within region with :name string specified as :admin_name.
      * (Notice that country name is also an admin_name). Geometry is defined in geojson format as polygons or multipolygons. Vertices are optimized out with :factor variable.
@@ -123,7 +123,7 @@ app.get("/api/geometry/:level_number([0-9]+)/:factor([0-9]+)/:admin_name", async
      *      ]
      * }
      */
-    let response = await overpassAPI.getGeometry(req.params.admin_name, req.params.level_number, req.params.factor);
+    let response = await overpassAPI.getGeometry(req.params.admin_name, req.params.level_number, req.params.wikidata, req.params.factor);
     if(response.error != undefined)
         res.status(500);
     res.set('Access-Control-Allow-Origin', '*');
