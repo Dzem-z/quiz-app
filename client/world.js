@@ -11,10 +11,10 @@ export class World extends MapArea {
         this.countries = countries;
     }
 
-    getNextAdminUnit = async (adminName) => {
+    getNextAdminUnit = async (adminName, wikidata) => {
         let countryId = this.getCountryId(adminName);
         let divisionLevels = await DATA_FETCHER.fetchCountryDivisionLevels(countryId);
-        let mapData = await DATA_FETCHER.fetchAdministratives(divisionLevels[0].level_number, adminName)
+        let mapData = await DATA_FETCHER.fetchAdministratives(divisionLevels[0].level_number, adminName, wikidata)
         let nextAdminUnit = createAdminUnit(adminName, divisionLevels, mapData);
         return nextAdminUnit;
     }

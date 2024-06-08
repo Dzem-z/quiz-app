@@ -3,14 +3,15 @@ import { MapArea } from "./mapArea.js";
 
 export class AdminUnit extends MapArea {
 
-    constructor(adminName, divisionLevels, mapData) {
+    constructor(adminName, divisionLevels, mapData, wikidata) {
         super();
         this.name = adminName;
         this.divisionLevels = divisionLevels;
         this.mapData = mapData;
+        this.wikidata = wikidata;
     }
 
-    getNextAdminUnit = async (adminName) => {
+    getNextAdminUnit = async (adminName, wikidata) => {
 
         let mapData = {features: []};
         let divisionLevels = this.divisionLevels;
@@ -20,11 +21,11 @@ export class AdminUnit extends MapArea {
                 return null;
             }
             let nextLevelNumber = divisionLevels[1].level_number;
-            mapData = await DATA_FETCHER.fetchAdministratives(nextLevelNumber, adminName);
+            mapData = await DATA_FETCHER.fetchAdministratives(nextLevelNumber, adminName, wikidata);
             divisionLevels.splice(0,1);
         }
 
-        return new AdminUnit(adminName, divisionLevels, mapData);
+        return new AdminUnit(adminName, divisionLevels, mapData, wikidata);
     }
 
     getButtonsData = function () {
@@ -32,7 +33,7 @@ export class AdminUnit extends MapArea {
             return { 
                 name: level.name,
                 fetcher: () => {
-                    return DATA_FETCHER.fetchAdministratives(level.level_number, this.name);
+                    return DATA_FETCHER.fetchAdministratives(level.level_number, this.name, this.wikidata);
                 }
             }
         });
