@@ -52,9 +52,7 @@ export class MapLoader {
         mapData = mapData.features;
         mapData = mapData.filter((feature) => "name" in feature.properties);
         getInstance().turnOff();
-        let control = new QuizControl();
-        this.addToMap(control);
-        this.eventHandler = new QuizHandler(mapData.map((feature) => feature.properties.name), control, this);
+        this.eventHandler = new QuizHandler(mapData.map((feature) => feature.properties.name), this);
         this.loadData(mapData);
     }
 

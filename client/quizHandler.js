@@ -2,6 +2,7 @@ import { QuizData } from "./quizData.js";
 import {STYLES} from "./polygonStyles.js";
 import { EventHandler } from "./eventHandler.js";
 import { FunctionWithTimeout } from "./funcWithTimeout.js";
+import { QuizControl } from "./quizControl.js";
 import { ResultsBanner } from "./resultsBanner.js";
 
 const RESULT_PRINT_TIME = 2000;
@@ -9,15 +10,20 @@ const RESULT_PRINT_TIME = 2000;
 export class QuizHandler extends EventHandler{
 
 
-    constructor(names, control, loader) {
+    constructor(names, loader) {
         super();
         this.names = new QuizData(names);
-        this.control = control;
+        this.control = new QuizControl();
+        loader.addToMap(this.control);
         this.loader = loader;
         this.iterator = this.names[Symbol.iterator]();
         this.toGuess = this.iterator.next().value;
         this.resetFunction = undefined;
-        control.setPrompt(this.toGuess);
+        this.banner = new ResultsBanner(document.getElementById("results"));
+        this.score = 0;
+        this.mistakes = 0;
+        this.control.setUp(this.names.length()+1);
+        this.control.setPrompt(this.toGuess);
     }
     
     handleClick = (e) => {
@@ -30,33 +36,41 @@ export class QuizHandler extends EventHandler{
             return;
         }
 
-        this.showResult(layer, result);
         if (result) {
-
+            
+            this.score++;
             layer.setStyle(STYLES.correctGuess);
             layer.guessed = true;
             let nextIt = this.iterator.next();
             this.toGuess = nextIt.value;
-            if (nextIt.value === undefined)
-                this.showSummary();
             this.control.setPrompt(this.toGuess);
         }
+        else {
+            this.mistakes++;
+        }
+        this.showResult(layer, result);
+        if (this.toGuess === undefined)
+            this.showSummary();
     }
 
     showSummary = () => {
-        this.control.remove();
-        this.banner = new ResultsBanner();
-        this.loader.addToMap(this.banner);
+        if (this.resetFunction != undefined) {
+            this.resetFunction.forceExecute();
+            this.resetFunction = undefined;
+        }
+        this.control.finish();
+        this.banner.show(this.score, this.mistakes);
     }
 
     removeBanner = () => {
-        if (this.banner != undefined)
-            this.banner.getContainer().remove();
+        if (this.banner != undefined) {
+            this.banner.remove();  
+        }
     }
 
     showResult = (layer, result) => {
 
-        this.control.printResult(result);
+        this.control.printResult(result, this.score, this.mistakes);
         if(result) {
             this.resetFunction = new FunctionWithTimeout(() => {
                 this.control.resetAfterPrinting();
