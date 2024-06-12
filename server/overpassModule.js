@@ -5,12 +5,13 @@ const geoJSONparser = require("./geoJsonModule.js");
 
  class OverpassAPI {
     
-    async getAdministratives(areaName, levelNumber) {
+    async getAdministratives(areaName, levelNumber, wikidata = null) {
+
         console.log(`
         [out:json]
         [timeout:90]
         ;
-        area[name="${areaName}"];
+        area[name="${areaName}"]${wikidata != null ? "[wikidata=" + wikidata + "]" : ""};
         relation[boundary=administrative][admin_level=${levelNumber}](area) -> .a;
         .a out tags;
         `)
@@ -18,7 +19,7 @@ const geoJSONparser = require("./geoJsonModule.js");
         [out:json]
         [timeout:90]
         ;
-        area[name="${areaName}"];
+        area[name="${areaName}"]${wikidata != null ? "[wikidata=" + wikidata + "]" : ""};
         relation[boundary=administrative][admin_level=${levelNumber}](area) -> .a;
         .a out tags;
         `);
@@ -34,12 +35,12 @@ const geoJSONparser = require("./geoJsonModule.js");
         return result;
     };
 
-    async getGeometry(areaName, levelNumber, optimizationFactor = 1){
+    async getGeometry(areaName, levelNumber, wikidata = null, optimizationFactor = 1){
         console.log(`
         [out:json]
         [timeout:90]
         ;
-        area[name="${areaName}"];
+        area[name="${areaName}"]${wikidata != null ? "[wikidata=" + wikidata + "]" : ""};
         relation[boundary=administrative][admin_level=${levelNumber}](area) -> .a;
         .a out geom;
         `)
@@ -47,7 +48,7 @@ const geoJSONparser = require("./geoJsonModule.js");
         [out:json]
         [timeout:90]
         ;
-        area[name="${areaName}"];
+        area[name="${areaName}"]${wikidata != null ? "[wikidata=" + wikidata + "]" : ""};
         relation[boundary=administrative][admin_level=${levelNumber}](area) -> .a;
         .a out geom;
         `);
@@ -112,22 +113,6 @@ const geoJSONparser = require("./geoJsonModule.js");
         } else {
             throw error;
         }
-    }
-
-    async waitForConnection(fetchFunc, ...args) {
-        let response;
-        try{
-            response = await fetchFunc(...args)
-        } catch (error) {
-            console.log("There was an error.", error.name, error.message)
-        }
-
-        if (response?.ok) {
-            console.log('Use the response here!');
-        } else {
-            console.log(`HTTP Response Code: ${response?.status}`)
-        }
-        return response;  
     }
 
     async fetchData(query) {

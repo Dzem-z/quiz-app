@@ -20,7 +20,8 @@ export class QuizChooser extends EventHandler {
     handleClick = async (e) => {
         let layer = e.target;
         let adminName = layer.feature.properties.name;
-        let nextAdminUnit = await this.mapArea.getNextAdminUnit(adminName);
+        let wikidata = layer.feature.properties.wikidata;
+        let nextAdminUnit = await this.mapArea.getNextAdminUnit(adminName, wikidata);
         
         if (nextAdminUnit === null) {
             alert("No further division for this area");

@@ -15,8 +15,10 @@ export const DATA_FETCHER = {
         return await fetch("http://localhost:3000/api/countries").then((data) => data.json());
     },
 
-    fetchAdministratives: loadingScreenDecorator(async (level, area) => {
+    fetchAdministratives: loadingScreenDecorator(async (level, area, wikidata) => {
         //Same as above. Reaches a remote server and thus takes a lot of time to complete.  
-        return await fetch("http://localhost:3000/api/geometry/" + level + "/1/" + area).then((data) => data.json());
+        return await fetch(
+            "http://localhost:3000/api/geometry/" + level + "/1/" + area + (typeof wikidata === "undefined" ? "" : "/" + wikidata)
+        ).then((data) => data.json());
     })
 }
